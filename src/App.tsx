@@ -7,6 +7,8 @@ import Index from "./pages/Index.tsx";
 import MyStudents from "./pages/MyStudents.tsx";
 import StudentProgressList from "./pages/StudentProgressList.tsx";
 import StudentProgress from "./pages/StudentProgress.tsx";
+import SOPReviewList from "./pages/SOPReviewList.tsx";
+import SOPReviewDetail from "./pages/SOPReviewDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
           <Route path="/my-students" element={<MyStudents />} />
           <Route path="/student-progress" element={<StudentProgressList />} />
           <Route path="/dashboard/student-progress/:studentId" element={<StudentProgress />} />
+          <Route path="/sop-review" element={<SOPReviewList />} />
+          <Route path="/dashboard/sop-review/:studentId" element={<SOPReviewDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
