@@ -10,6 +10,7 @@ import StudentProgress from "./pages/StudentProgress.tsx";
 import SOPReviewList from "./pages/SOPReviewList.tsx";
 import SOPReviewDetail from "./pages/SOPReviewDetail.tsx";
 import Notifications from "./pages/Notifications.tsx";
+import UniversitySearch from "./pages/UniversitySearch.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/sop-review" element={<SOPReviewList />} />
           <Route path="/dashboard/sop-review/:studentId" element={<SOPReviewDetail />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/university-search" element={<UniversitySearch />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
