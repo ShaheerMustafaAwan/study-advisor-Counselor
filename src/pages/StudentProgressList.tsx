@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { students } from "@/data/students";
+import { useCounselorStudents } from "@/hooks/useCounselorStudents";
 
 const statusColors: Record<string, string> = {
   Active: "bg-primary/10 text-primary border-0",
@@ -14,15 +14,36 @@ const statusColors: Record<string, string> = {
 
 const StudentProgressList = () => {
   const navigate = useNavigate();
+  const { data, isLoading, isError, error } = useCounselorStudents({
+    page: 1,
+    limit: 100,
+  });
+
+  const students = data?.students ?? [];
+  const errorMessage =
+    error instanceof Error ? error.message : "Failed to load students";
 
   return (
     <CounselorLayout>
       <div>
         <h1 className="text-2xl font-bold text-foreground">Student Progress</h1>
-        <p className="text-sm text-muted-foreground mt-1">Select a student to view their application progress</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          {isLoading
+            ? "Loading students..."
+            : isError
+              ? errorMessage
+              : "Select a student to view their application progress"}
+        </p>
       </div>
 
       <div className="grid gap-3">
+        {!isLoading && students.length === 0 && (
+          <Card className="shadow-card">
+            <CardContent className="p-6 text-sm text-muted-foreground">
+              No students found.
+            </CardContent>
+          </Card>
+        )}
         {students.map((s) => (
           <Card
             key={s.id}
@@ -37,20 +58,28 @@ const StudentProgressList = () => {
               </Avatar>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-foreground truncate">{s.name}</h3>
+                  <h3 className="font-semibold text-foreground truncate">
+                    {s.name}
+                  </h3>
                   <Badge className={statusColors[s.status]}>{s.status}</Badge>
                 </div>
-                <p className="text-sm text-muted-foreground truncate">{s.program}</p>
+                <p className="text-sm text-muted-foreground truncate">
+                  {s.program}
+                </p>
               </div>
               <div className="hidden sm:flex items-center gap-4 shrink-0">
                 <div className="w-32">
                   <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                     <span>Progress</span>
-                    <span className="font-medium text-foreground">{s.progress}%</span>
+                    <span className="font-medium text-foreground">
+                      {s.progress}%
+                    </span>
                   </div>
                   <Progress value={s.progress} className="h-2" />
                 </div>
-                <span className="text-xs text-muted-foreground w-24 text-right">{s.lastActivity}</span>
+                <span className="text-xs text-muted-foreground w-24 text-right">
+                  {s.lastActivity}
+                </span>
               </div>
             </CardContent>
           </Card>

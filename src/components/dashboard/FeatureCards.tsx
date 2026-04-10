@@ -1,45 +1,71 @@
-import { Users, BarChart3, FileText, Bell, Search, ArrowRight } from "lucide-react";
+import {
+  Users,
+  BarChart3,
+  FileText,
+  Bell,
+  Search,
+  ArrowRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
-const features = [
+interface FeatureCardsProps {
+  counts: {
+    students: number;
+    studentProgress: number;
+    sopReview: number;
+    notifications: number;
+    universitySearch: number;
+  };
+}
+
+const buildFeatures = (counts: FeatureCardsProps["counts"]) => [
   {
     icon: Users,
     title: "Student Management",
     description: "View and manage all assigned students",
-    count: 128,
+    count: counts.students,
     color: "from-blue-500 to-indigo-500",
+    route: "/my-students",
   },
   {
     icon: BarChart3,
     title: "Student Progress",
     description: "Track academic milestones and deadlines",
-    count: 34,
+    count: counts.studentProgress,
     color: "from-indigo-500 to-purple-500",
+    route: "/student-progress",
   },
   {
     icon: FileText,
     title: "SOP Review",
     description: "Review and provide feedback on SOPs",
-    count: 12,
+    count: counts.sopReview,
     color: "from-violet-500 to-purple-500",
+    route: "/sop-review",
   },
   {
     icon: Bell,
     title: "Notifications",
     description: "Stay updated with student activities",
-    count: 5,
+    count: counts.notifications,
     color: "from-blue-400 to-blue-600",
+    route: "/notifications",
   },
   {
     icon: Search,
     title: "University Search",
     description: "Explore universities and programs",
-    count: 250,
+    count: counts.universitySearch,
     color: "from-cyan-500 to-blue-500",
+    route: "/university-search",
   },
 ];
 
-const FeatureCards = () => {
+const FeatureCards = ({ counts }: FeatureCardsProps) => {
+  const navigate = useNavigate();
+  const features = buildFeatures(counts);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {features.map((feature) => (
@@ -58,8 +84,15 @@ const FeatureCards = () => {
             </span>
           </div>
           <h3 className="text-base font-semibold mb-1">{feature.title}</h3>
-          <p className="text-sm text-muted-foreground mb-5">{feature.description}</p>
-          <Button variant="gradient" size="sm" className="w-full gap-1.5 rounded-xl">
+          <p className="text-sm text-muted-foreground mb-5">
+            {feature.description}
+          </p>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="w-full gap-1.5 rounded-xl"
+            onClick={() => navigate(feature.route)}
+          >
             Open <ArrowRight className="h-3.5 w-3.5" />
           </Button>
         </div>

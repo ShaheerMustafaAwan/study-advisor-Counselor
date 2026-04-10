@@ -3,15 +3,33 @@ import CounselorLayout from "@/components/dashboard/CounselorLayout";
 import StudentStatsCards from "@/components/students/StudentStatsCards";
 import StudentFilters from "@/components/students/StudentFilters";
 import StudentTable from "@/components/students/StudentTable";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { students } from "@/data/students";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useCounselorStudents } from "@/hooks/useCounselorStudents";
+import type { StudentStatus } from "@/types/student";
 
 const MyStudents = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [program, setProgram] = useState("all");
+  const [page] = useState(1);
+
+  const { data, isLoading, isError, error } = useCounselorStudents({
+    q: search || undefined,
+    status: status as "all" | StudentStatus,
+    program,
+    page,
+    limit: 100,
+  });
 
   const filtered = useMemo(() => {
+    const students = data?.students ?? [];
+
     return students.filter((s) => {
       const q = search.toLowerCase();
       const matchesSearch =
@@ -23,21 +41,60 @@ const MyStudents = () => {
       const matchesProgram = program === "all" || s.program.includes(program);
       return matchesSearch && matchesStatus && matchesProgram;
     });
-  }, [search, status, program]);
+  }, [data?.students, search, status, program]);
+
+  const statusOptions = useMemo(
+    () => [
+      { value: "all" as const, label: "All Status" },
+      { value: "Active" as const, label: "Active" },
+      { value: "Review Needed" as const, label: "Review Needed" },
+      { value: "Completed" as const, label: "Completed" },
+    ],
+    [],
+  );
+
+  const programOptions = useMemo(() => {
+    const options = data?.summary.availablePrograms || [];
+    return [
+      { value: "all", label: "All Programs" },
+      ...options.map((p) => ({ value: p, label: p })),
+    ];
+  }, [data?.summary.availablePrograms]);
+
+  const stats = data?.summary || {
+    total: 0,
+    active: 0,
+    reviewNeeded: 0,
+    completed: 0,
+    availablePrograms: [],
+  };
+
+  const errorMessage =
+    error instanceof Error ? error.message : "Failed to load students";
 
   return (
     <CounselorLayout>
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Student Management</h1>
-        <p className="text-muted-foreground mt-1">View and manage all your assigned students</p>
+        <h1 className="text-2xl font-bold text-foreground">
+          Student Management
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          View and manage all your assigned students
+        </p>
       </div>
 
-      <StudentStatsCards />
+      <StudentStatsCards stats={stats} />
 
       <Card className="rounded-xl border border-border shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg">Student List</CardTitle>
-          <CardDescription>Search and filter your assigned students</CardDescription>
+          <CardDescription>
+            {isLoading
+              ? "Loading students..."
+              : isError
+                ? errorMessage
+                : "Search and filter your assigned students"}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <StudentFilters
@@ -47,6 +104,8 @@ const MyStudents = () => {
             onStatusChange={setStatus}
             program={program}
             onProgramChange={setProgram}
+            statusOptions={statusOptions}
+            programOptions={programOptions}
           />
           <StudentTable students={filtered} />
         </CardContent>

@@ -7,6 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { StudentStatus } from "@/types/student";
+
+interface FilterOption {
+  label: string;
+  value: string;
+}
 
 interface StudentFiltersProps {
   search: string;
@@ -15,6 +21,8 @@ interface StudentFiltersProps {
   onStatusChange: (v: string) => void;
   program: string;
   onProgramChange: (v: string) => void;
+  statusOptions: Array<{ value: "all" | StudentStatus; label: string }>;
+  programOptions: FilterOption[];
 }
 
 const StudentFilters = ({
@@ -24,6 +32,8 @@ const StudentFilters = ({
   onStatusChange,
   program,
   onProgramChange,
+  statusOptions,
+  programOptions,
 }: StudentFiltersProps) => (
   <div className="flex flex-col md:flex-row gap-3">
     <div className="relative flex-1">
@@ -40,10 +50,11 @@ const StudentFilters = ({
         <SelectValue placeholder="All Status" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">All Status</SelectItem>
-        <SelectItem value="Active">Active</SelectItem>
-        <SelectItem value="Review Needed">Review Needed</SelectItem>
-        <SelectItem value="Completed">Completed</SelectItem>
+        {statusOptions.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
     <Select value={program} onValueChange={onProgramChange}>
@@ -51,10 +62,11 @@ const StudentFilters = ({
         <SelectValue placeholder="All Programs" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">All Programs</SelectItem>
-        <SelectItem value="Computer Science">Computer Science</SelectItem>
-        <SelectItem value="Data Science">Data Science</SelectItem>
-        <SelectItem value="Business Administration">Business Administration</SelectItem>
+        {programOptions.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   </div>

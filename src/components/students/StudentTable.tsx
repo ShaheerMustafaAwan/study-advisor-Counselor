@@ -6,7 +6,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import StudentRow from "./StudentRow";
-import type { Student } from "@/data/students";
+import type { Student } from "@/types/student";
 
 const StudentTable = ({ students }: { students: Student[] }) => (
   <div className="overflow-auto rounded-xl border border-border">

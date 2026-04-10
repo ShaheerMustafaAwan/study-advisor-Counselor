@@ -1,45 +1,12 @@
-const activities = [
-  {
-    initials: "AS",
-    name: "Ayesha Sharma",
-    action: "Submitted SOP draft",
-    university: "MIT",
-    status: "Pending",
-    time: "2 min ago",
-  },
-  {
-    initials: "RK",
-    name: "Rahul Kumar",
-    action: "Updated application",
-    university: "Stanford",
-    status: "In Progress",
-    time: "15 min ago",
-  },
-  {
-    initials: "PL",
-    name: "Priya Lal",
-    action: "Received offer letter",
-    university: "Oxford",
-    status: "Completed",
-    time: "1 hr ago",
-  },
-  {
-    initials: "MJ",
-    name: "Meera Joshi",
-    action: "Scheduled counseling call",
-    university: "Harvard",
-    status: "Upcoming",
-    time: "3 hr ago",
-  },
-  {
-    initials: "VT",
-    name: "Vikram Thakur",
-    action: "Uploaded documents",
-    university: "UCL",
-    status: "In Progress",
-    time: "5 hr ago",
-  },
-];
+export interface DashboardActivityItem {
+  id: string;
+  initials: string;
+  name: string;
+  action: string;
+  university: string;
+  status: "Pending" | "In Progress" | "Completed" | "Upcoming";
+  time: string;
+}
 
 const statusStyles: Record<string, string> = {
   Pending: "bg-amber-50 text-amber-700",
@@ -48,28 +15,51 @@ const statusStyles: Record<string, string> = {
   Upcoming: "bg-violet-50 text-violet-700",
 };
 
-const RecentActivity = () => {
+interface RecentActivityProps {
+  activities: DashboardActivityItem[];
+}
+
+const RecentActivity = ({ activities }: RecentActivityProps) => {
   return (
     <div className="bg-card rounded-2xl shadow-card border border-border overflow-hidden">
       <div className="px-6 py-5 border-b border-border">
         <h2 className="text-lg font-semibold">Recent Student Activity</h2>
       </div>
 
+      {activities.length === 0 && (
+        <div className="px-6 py-8 text-sm text-muted-foreground">
+          No recent activity yet.
+        </div>
+      )}
+
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-secondary/50">
-              <th className="text-left py-3 px-6 font-medium text-muted-foreground">Student</th>
-              <th className="text-left py-3 px-4 font-medium text-muted-foreground">Action</th>
-              <th className="text-left py-3 px-4 font-medium text-muted-foreground">University</th>
-              <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
-              <th className="text-right py-3 px-6 font-medium text-muted-foreground">Time</th>
+              <th className="text-left py-3 px-6 font-medium text-muted-foreground">
+                Student
+              </th>
+              <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                Action
+              </th>
+              <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                University
+              </th>
+              <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                Status
+              </th>
+              <th className="text-right py-3 px-6 font-medium text-muted-foreground">
+                Time
+              </th>
             </tr>
           </thead>
           <tbody>
             {activities.map((a) => (
-              <tr key={a.name} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+              <tr
+                key={a.id}
+                className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors"
+              >
                 <td className="py-3.5 px-6">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shrink-0">
@@ -78,14 +68,20 @@ const RecentActivity = () => {
                     <span className="font-medium">{a.name}</span>
                   </div>
                 </td>
-                <td className="py-3.5 px-4 text-muted-foreground">{a.action}</td>
+                <td className="py-3.5 px-4 text-muted-foreground">
+                  {a.action}
+                </td>
                 <td className="py-3.5 px-4 font-medium">{a.university}</td>
                 <td className="py-3.5 px-4">
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[a.status] ?? ""}`}>
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusStyles[a.status] ?? ""}`}
+                  >
                     {a.status}
                   </span>
                 </td>
-                <td className="py-3.5 px-6 text-right text-muted-foreground text-xs">{a.time}</td>
+                <td className="py-3.5 px-6 text-right text-muted-foreground text-xs">
+                  {a.time}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -95,17 +91,23 @@ const RecentActivity = () => {
       {/* Mobile list */}
       <div className="md:hidden divide-y divide-border">
         {activities.map((a) => (
-          <div key={a.name} className="px-5 py-4 flex items-start gap-3">
+          <div key={a.id} className="px-5 py-4 flex items-start gap-3">
             <div className="h-9 w-9 rounded-full gradient-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shrink-0 mt-0.5">
               {a.initials}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
                 <span className="font-medium text-sm truncate">{a.name}</span>
-                <span className="text-xs text-muted-foreground shrink-0">{a.time}</span>
+                <span className="text-xs text-muted-foreground shrink-0">
+                  {a.time}
+                </span>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5">{a.action} — {a.university}</p>
-              <span className={`inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[a.status] ?? ""}`}>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {a.action} — {a.university}
+              </p>
+              <span
+                className={`inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[a.status] ?? ""}`}
+              >
                 {a.status}
               </span>
             </div>

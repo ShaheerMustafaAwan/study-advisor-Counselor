@@ -1,8 +1,21 @@
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { StudentDocument } from "@/data/studentProgress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { StudentDocument } from "@/types/studentProgress";
 
 interface Props {
   documents: StudentDocument[];
@@ -23,8 +36,13 @@ const uploadColors: Record<string, string> = {
 const DocumentsModule = ({ documents: initialDocs }: Props) => {
   const [documents, setDocuments] = useState(initialDocs);
 
-  const updateStatus = (id: string, status: StudentDocument["verificationStatus"]) => {
-    setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, verificationStatus: status } : d)));
+  const updateStatus = (
+    id: string,
+    status: StudentDocument["verificationStatus"],
+  ) => {
+    setDocuments((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, verificationStatus: status } : d)),
+    );
   };
 
   return (
@@ -41,17 +59,28 @@ const DocumentsModule = ({ documents: initialDocs }: Props) => {
         <TableBody>
           {documents.map((doc) => (
             <TableRow key={doc.id} className="hover:bg-secondary/30">
-              <TableCell className="font-medium text-foreground">{doc.name}</TableCell>
-              <TableCell>
-                <Badge className={uploadColors[doc.uploadStatus]}>{doc.uploadStatus}</Badge>
+              <TableCell className="font-medium text-foreground">
+                {doc.name}
               </TableCell>
               <TableCell>
-                <Badge className={statusColors[doc.verificationStatus]}>{doc.verificationStatus}</Badge>
+                <Badge className={uploadColors[doc.uploadStatus]}>
+                  {doc.uploadStatus}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge className={statusColors[doc.verificationStatus]}>
+                  {doc.verificationStatus}
+                </Badge>
               </TableCell>
               <TableCell>
                 <Select
                   value={doc.verificationStatus}
-                  onValueChange={(v) => updateStatus(doc.id, v as StudentDocument["verificationStatus"])}
+                  onValueChange={(v) =>
+                    updateStatus(
+                      doc.id,
+                      v as StudentDocument["verificationStatus"],
+                    )
+                  }
                 >
                   <SelectTrigger className="h-8 text-xs w-[170px]">
                     <SelectValue />
@@ -59,7 +88,9 @@ const DocumentsModule = ({ documents: initialDocs }: Props) => {
                   <SelectContent>
                     <SelectItem value="Pending">Pending</SelectItem>
                     <SelectItem value="Approved">Approved</SelectItem>
-                    <SelectItem value="Reupload Requested">Reupload Requested</SelectItem>
+                    <SelectItem value="Reupload Requested">
+                      Reupload Requested
+                    </SelectItem>
                     <SelectItem value="Rejected">Rejected</SelectItem>
                   </SelectContent>
                 </Select>
