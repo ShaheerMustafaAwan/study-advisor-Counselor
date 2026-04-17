@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,9 +9,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MapPin, GraduationCap } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import {
+  getCounselorStudentUniversities,
+  updateCounselorStudentUniversityStatus,
+} from "@/api/counselorStudents";
 import type { University } from "@/types/studentProgress";
 
 interface Props {
+  studentId: string;
   universities: University[];
 }
 
@@ -23,14 +30,101 @@ const statusColors: Record<string, string> = {
   Rejected: "bg-destructive/10 text-destructive border-0",
 };
 
-const UniversitiesModule = ({ universities: initial }: Props) => {
+const UniversitiesModule = ({ studentId, universities: initial }: Props) => {
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["counselor-student-universities", studentId],
+    queryFn: () => getCounselorStudentUniversities(studentId, 8),
+    enabled: Boolean(studentId),
+    staleTime: 30_000,
+  });
+
   const [universities, setUniversities] = useState(initial);
 
-  const updateStatus = (id: string, status: University["status"]) => {
-    setUniversities((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, status } : u)),
+  useEffect(() => {
+    if (!data) return;
+
+    setUniversities(
+      data.map((uni) => ({
+        id: uni.id,
+        universityId: uni.universityId,
+        name: uni.name,
+        country: uni.country,
+        program: uni.program,
+        status: uni.status,
+        note: uni.note,
+        updatedAt: uni.updatedAt,
+        matchScore: uni.matchScore,
+      })),
     );
+  }, [data]);
+
+  const statusMutation = useMutation({
+    mutationFn: async (payload: {
+      id: string;
+      universityId?: number;
+      status: University["status"];
+    }) => {
+      const parsedUniversityId = payload.universityId ?? Number(payload.id);
+      if (Number.isNaN(parsedUniversityId)) {
+        throw new Error("Invalid university id");
+      }
+
+      await updateCounselorStudentUniversityStatus(
+        studentId,
+        parsedUniversityId,
+        {
+          status: payload.status,
+        },
+      );
+
+      return payload;
+    },
+    onSuccess: ({ id, status }) => {
+      setUniversities((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, status } : u)),
+      );
+      toast.success("University status updated");
+      queryClient.invalidateQueries({
+        queryKey: ["counselor-student-universities", studentId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["counselor-student-activities", studentId],
+      });
+    },
+    onError: (error) => {
+      toast.error(
+        (error as Error).message || "Failed to update university status",
+      );
+    },
+  });
+
+  const updateStatus = (id: string, status: University["status"]) => {
+    const target = universities.find((u) => u.id === id);
+    statusMutation.mutate({
+      id,
+      universityId: target?.universityId,
+      status,
+    });
   };
+
+  if (isLoading) {
+    return (
+      <div className="text-sm text-muted-foreground">
+        Loading universities...
+      </div>
+    );
+  }
+
+  if (!universities.length) {
+    return (
+      <div className="text-sm text-muted-foreground">
+        No dynamic university recommendations available yet for this student
+        profile.
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-3">
@@ -63,7 +157,10 @@ const UniversitiesModule = ({ universities: initial }: Props) => {
                   updateStatus(uni.id, v as University["status"])
                 }
               >
-                <SelectTrigger className="h-8 text-xs w-[150px]">
+                <SelectTrigger
+                  className="h-8 text-xs w-[150px]"
+                  disabled={statusMutation.isPending}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

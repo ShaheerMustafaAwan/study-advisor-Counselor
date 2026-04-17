@@ -141,13 +141,22 @@ const StudentProgressPage = () => {
 
             <div className="p-6">
               <TabsContent value="documents" className="mt-0">
-                <DocumentsModule documents={data.documents} />
+                <DocumentsModule
+                  studentId={data.student.id}
+                  documents={data.documents}
+                />
               </TabsContent>
               <TabsContent value="universities" className="mt-0">
-                <UniversitiesModule universities={data.universities} />
+                <UniversitiesModule
+                  studentId={data.student.id}
+                  universities={data.universities}
+                />
               </TabsContent>
               <TabsContent value="sop" className="mt-0">
-                <SOPModule sopContent={data.sopContent} />
+                <SOPModule
+                  studentId={data.student.id}
+                  sopContent={data.sopContent}
+                />
               </TabsContent>
               <TabsContent value="activity" className="mt-0">
                 <ActivityTimeline activities={timelineActivities} />

@@ -3,6 +3,106 @@ const RECOMMENDATION_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ??
   "http://localhost:4000/api";
 
+function normalizeBaseUrl(value: string): string {
+  return value.replace(/\/+$/, "");
+}
+
+function getRecommendationApiBases(): string[] {
+  const rawBases = [
+    RECOMMENDATION_API_BASE_URL,
+    import.meta.env.VITE_API_BASE_URL,
+  ].filter((value): value is string => Boolean(value && value.trim()));
+
+  const bases = new Set<string>();
+
+  for (const base of rawBases) {
+    const normalized = normalizeBaseUrl(base);
+    bases.add(normalized);
+
+    // Local dev safety-net: if 4000 points to stale service, retry 4010.
+    if (/localhost:4000|127\.0\.0\.1:4000/i.test(normalized)) {
+      bases.add(normalized.replace(/:4000/i, ":4010"));
+    }
+  }
+
+  return Array.from(bases);
+}
+
+async function parseApiError(
+  response: Response,
+  fallback: string,
+): Promise<string> {
+  try {
+    const data = await response.json();
+    if (typeof data?.detail === "string" && data.detail.trim()) {
+      return data.detail;
+    }
+    if (typeof data?.message === "string" && data.message.trim()) {
+      return data.message;
+    }
+    if (typeof data?.error === "string" && data.error.trim()) {
+      return data.error;
+    }
+  } catch {
+    // Ignore parse errors and fallback to response text.
+  }
+
+  try {
+    const text = await response.text();
+    if (text.trim()) {
+      return text;
+    }
+  } catch {
+    // Ignore text parse errors and return fallback.
+  }
+
+  return fallback;
+}
+
+async function fetchRecommendationApi(
+  path: string,
+  init?: RequestInit,
+): Promise<Response> {
+  const bases = getRecommendationApiBases();
+  let lastError = "Recommendation service is unavailable";
+
+  for (let i = 0; i < bases.length; i += 1) {
+    const base = bases[i];
+    const isLast = i === bases.length - 1;
+
+    try {
+      const response = await fetch(`${base}${path}`, init);
+
+      if (response.ok) {
+        return response;
+      }
+
+      const errorMessage = await parseApiError(
+        response,
+        `Request failed with status ${response.status}`,
+      );
+      lastError = errorMessage;
+
+      const endpointNotFound =
+        response.status === 404 && /endpoint not found/i.test(errorMessage);
+
+      if (!isLast && endpointNotFound) {
+        continue;
+      }
+
+      throw new Error(errorMessage);
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+
+      if (!isLast) {
+        continue;
+      }
+    }
+  }
+
+  throw new Error(lastError);
+}
+
 export interface StudentProfileRequest {
   gpa: number;
   ielts_score?: number;
@@ -161,28 +261,18 @@ export function convertToUniversityUiCard(
 export const universityRecommendationsApi = {
   async getRecommendations(
     studentProfile: StudentProfileRequest,
-    topK: number,
+    topK = 5,
   ): Promise<RecommendationResponse> {
-    const response = await fetch(
-      `${RECOMMENDATION_API_BASE_URL}/recommendations/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          student_profile: studentProfile,
-          top_k: topK,
-        }),
+    const response = await fetchRecommendationApi("/recommendations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
-
-    if (!response.ok) {
-      const payload = await response.json().catch(() => null);
-      const message =
-        payload?.detail || payload?.message || "Failed to get recommendations";
-      throw new Error(message);
-    }
+      body: JSON.stringify({
+        student_profile: studentProfile,
+        top_k: topK,
+      }),
+    });
 
     return (await response.json()) as RecommendationResponse;
   },
@@ -201,42 +291,24 @@ export const universityRecommendationsApi = {
     }
 
     const query = params.toString();
-    const url = `${RECOMMENDATION_API_BASE_URL}/universities/${query ? `?${query}` : ""}`;
-
-    const response = await fetch(url, {
+    const path = `/universities${query ? `?${query}` : ""}`;
+    const response = await fetchRecommendationApi(path, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
 
-    if (!response.ok) {
-      const payload = await response.json().catch(() => null);
-      const message =
-        payload?.detail || payload?.message || "Failed to fetch universities";
-      throw new Error(message);
-    }
-
     return (await response.json()) as UniversityListResponse[];
   },
 
   async getUniversityById(id: number): Promise<UniversityListResponse> {
-    const response = await fetch(
-      `${RECOMMENDATION_API_BASE_URL}/universities/${id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const response = await fetchRecommendationApi(`/universities/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
-
-    if (!response.ok) {
-      const payload = await response.json().catch(() => null);
-      const message =
-        payload?.detail || payload?.message || "Failed to fetch university";
-      throw new Error(message);
-    }
+    });
 
     return (await response.json()) as UniversityListResponse;
   },

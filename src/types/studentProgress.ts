@@ -3,6 +3,11 @@ import type { Student } from "@/types/student";
 export interface StudentDocument {
   id: string;
   name: string;
+  fileUrl?: string | null;
+  uploadedAt?: string | null;
+  documentType?: string;
+  reviewNote?: string | null;
+  reviewedAt?: string | null;
   uploadStatus: "Uploaded" | "Not Uploaded";
   verificationStatus:
     | "Pending"
@@ -13,9 +18,13 @@ export interface StudentDocument {
 
 export interface University {
   id: string;
+  universityId?: number;
   name: string;
   country: string;
   program: string;
+  note?: string | null;
+  updatedAt?: string | null;
+  matchScore?: number;
   status:
     | "Considering"
     | "Shortlisted"

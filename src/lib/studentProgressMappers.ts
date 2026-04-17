@@ -86,15 +86,23 @@ const toProgressStages = (
 const toDocuments = (student: CounselorStudentApi): StudentDocument[] => {
   const uploadedDocs: StudentDocument[] = student.documents.map((doc) => ({
     id: String(doc.id),
-    name: formatDocType(doc.type),
+    name: doc.fileName || formatDocType(doc.type),
+    fileUrl: doc.fileUrl || null,
+    uploadedAt: doc.createdAt,
+    documentType: doc.type,
     uploadStatus: "Uploaded",
-    verificationStatus: "Pending",
+    verificationStatus: doc.verificationStatus || "Pending",
+    reviewNote: doc.reviewNote || null,
+    reviewedAt: doc.reviewedAt || null,
   }));
 
   const pendingDocs: StudentDocument[] = student.missingDocumentHints.map(
     (name) => ({
       id: `missing-${name}`,
       name,
+      fileUrl: null,
+      uploadedAt: null,
+      documentType: "MISSING",
       uploadStatus: "Not Uploaded",
       verificationStatus: "Pending",
     }),
@@ -104,19 +112,7 @@ const toDocuments = (student: CounselorStudentApi): StudentDocument[] => {
 };
 
 const toUniversities = (student: CounselorStudentApi): University[] => {
-  if (!student.country || student.country === "Not specified") {
-    return [];
-  }
-
-  return [
-    {
-      id: `uni-${student.id}`,
-      name: `Top Universities in ${student.country}`,
-      country: student.country,
-      program: student.program,
-      status: "Considering",
-    },
-  ];
+  return [];
 };
 
 const toActivities = (student: CounselorStudentApi): ActivityItem[] => {
@@ -201,10 +197,27 @@ const ACTIVITY_TYPE_MAP: Record<
 export const mapStudentActivitiesToTimeline = (
   activities: CounselorStudentActivityApi[],
 ): ActivityItem[] => {
+  const resolveType = (
+    activity: CounselorStudentActivityApi,
+  ): ActivityItem["type"] => {
+    if (
+      activity.eventType === "PROFILE_UPDATED" &&
+      activity.metadata &&
+      typeof activity.metadata === "object" &&
+      "kind" in activity.metadata &&
+      (activity.metadata as Record<string, unknown>).kind ===
+        "UNIVERSITY_STATUS_UPDATE"
+    ) {
+      return "university";
+    }
+
+    return ACTIVITY_TYPE_MAP[activity.eventType] || "profile";
+  };
+
   return activities.map((activity) => ({
     id: `activity-${activity.id}`,
     action: activity.description,
     timestamp: getRelativeTime(activity.createdAt),
-    type: ACTIVITY_TYPE_MAP[activity.eventType] || "profile",
+    type: resolveType(activity),
   }));
 };

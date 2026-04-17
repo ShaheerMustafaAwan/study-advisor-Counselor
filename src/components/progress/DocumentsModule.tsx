@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -15,9 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { updateCounselorStudentDocumentReview } from "@/api/counselorStudents";
 import type { StudentDocument } from "@/types/studentProgress";
 
 interface Props {
+  studentId: string;
   documents: StudentDocument[];
 }
 
@@ -33,16 +39,65 @@ const uploadColors: Record<string, string> = {
   "Not Uploaded": "bg-secondary text-muted-foreground border-0",
 };
 
-const DocumentsModule = ({ documents: initialDocs }: Props) => {
+const DocumentsModule = ({ studentId, documents: initialDocs }: Props) => {
   const [documents, setDocuments] = useState(initialDocs);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setDocuments(initialDocs);
+  }, [initialDocs]);
+
+  const reviewMutation = useMutation({
+    mutationFn: async (payload: {
+      id: string;
+      status: StudentDocument["verificationStatus"];
+    }) => {
+      const documentId = Number(payload.id);
+      if (Number.isNaN(documentId)) {
+        throw new Error("Invalid document id");
+      }
+
+      await updateCounselorStudentDocumentReview(studentId, documentId, {
+        verificationStatus: payload.status,
+      });
+
+      return payload;
+    },
+    onSuccess: ({ id, status }) => {
+      setDocuments((prev) =>
+        prev.map((d) =>
+          d.id === id
+            ? {
+                ...d,
+                verificationStatus: status,
+                reviewedAt: new Date().toISOString(),
+              }
+            : d,
+        ),
+      );
+      toast.success("Document review updated");
+      queryClient.invalidateQueries({
+        queryKey: ["counselor-student", studentId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["counselor-student-activities", studentId],
+      });
+    },
+    onError: (error) => {
+      toast.error((error as Error).message || "Failed to update review status");
+    },
+  });
 
   const updateStatus = (
-    id: string,
+    doc: StudentDocument,
     status: StudentDocument["verificationStatus"],
   ) => {
-    setDocuments((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, verificationStatus: status } : d)),
-    );
+    if (doc.uploadStatus !== "Uploaded" || !doc.fileUrl) {
+      toast.error("Cannot review a document that has not been uploaded");
+      return;
+    }
+
+    reviewMutation.mutate({ id: doc.id, status });
   };
 
   return (
@@ -53,6 +108,8 @@ const DocumentsModule = ({ documents: initialDocs }: Props) => {
             <TableHead>Document Name</TableHead>
             <TableHead>Upload Status</TableHead>
             <TableHead>Verification</TableHead>
+            <TableHead>Uploaded On</TableHead>
+            <TableHead>File</TableHead>
             <TableHead className="w-[200px]">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -72,17 +129,45 @@ const DocumentsModule = ({ documents: initialDocs }: Props) => {
                   {doc.verificationStatus}
                 </Badge>
               </TableCell>
+              <TableCell className="text-xs text-muted-foreground">
+                {doc.uploadedAt
+                  ? new Date(doc.uploadedAt).toISOString().slice(0, 10)
+                  : "-"}
+              </TableCell>
+              <TableCell>
+                {doc.fileUrl ? (
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs"
+                  >
+                    <a href={doc.fileUrl} target="_blank" rel="noreferrer">
+                      <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                      Open
+                    </a>
+                  </Button>
+                ) : (
+                  <span className="text-xs text-muted-foreground">N/A</span>
+                )}
+              </TableCell>
               <TableCell>
                 <Select
                   value={doc.verificationStatus}
                   onValueChange={(v) =>
                     updateStatus(
-                      doc.id,
+                      doc,
                       v as StudentDocument["verificationStatus"],
                     )
                   }
                 >
-                  <SelectTrigger className="h-8 text-xs w-[170px]">
+                  <SelectTrigger
+                    className="h-8 text-xs w-[170px]"
+                    disabled={
+                      doc.uploadStatus !== "Uploaded" ||
+                      reviewMutation.isPending
+                    }
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

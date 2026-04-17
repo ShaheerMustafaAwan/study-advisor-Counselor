@@ -255,8 +255,55 @@ const UniversitySearch = () => {
     }));
   };
 
+  const normalizeOptionalNumber = (value: number | undefined) => {
+    if (typeof value !== "number" || Number.isNaN(value)) {
+      return undefined;
+    }
+    return value;
+  };
+
+  const normalizeRecommendationProfile = (
+    profile: StudentProfileRequest,
+  ): StudentProfileRequest => {
+    const fieldOfStudy = String(profile.field_of_study || "").trim();
+    const institutionName = profile.institution_name?.trim();
+
+    return {
+      gpa: normalizeOptionalNumber(profile.gpa) ?? 3.0,
+      ielts_score: normalizeOptionalNumber(profile.ielts_score),
+      toefl_score: normalizeOptionalNumber(profile.toefl_score),
+      gre_score: normalizeOptionalNumber(profile.gre_score),
+      gmat_score: normalizeOptionalNumber(profile.gmat_score),
+      experience_years: Math.max(
+        0,
+        Math.round(normalizeOptionalNumber(profile.experience_years) ?? 0),
+      ),
+      research_experience: Boolean(profile.research_experience),
+      publications_count: Math.max(
+        0,
+        Math.round(normalizeOptionalNumber(profile.publications_count) ?? 0),
+      ),
+      work_experience_relevant: Boolean(profile.work_experience_relevant),
+      leadership_experience: Boolean(profile.leadership_experience),
+      current_education_level: profile.current_education_level || "BACHELORS",
+      field_of_study: fieldOfStudy || "Computer Science",
+      institution_name: institutionName || undefined,
+      desired_program: profile.desired_program || "MASTERS",
+      preferred_countries: Array.isArray(profile.preferred_countries)
+        ? profile.preferred_countries
+            .map((country) => String(country || "").trim())
+            .filter(Boolean)
+        : [],
+      budget_usd: normalizeOptionalNumber(profile.budget_usd),
+      preferred_intake: profile.preferred_intake || undefined,
+      study_mode: profile.study_mode || undefined,
+    };
+  };
+
   const handleGenerateRecommendations = async () => {
-    if (!studentProfile.field_of_study.trim()) {
+    const normalizedProfile = normalizeRecommendationProfile(studentProfile);
+
+    if (!normalizedProfile.field_of_study.trim()) {
       toast.error("Field of study is required.");
       return;
     }
@@ -268,7 +315,8 @@ const UniversitySearch = () => {
     }
 
     try {
-      await getRecommendations(studentProfile, topKNumber);
+      setStudentProfile(normalizedProfile);
+      await getRecommendations(normalizedProfile, topKNumber);
       toast.success("Recommendations generated successfully.");
     } catch (error) {
       const message =
