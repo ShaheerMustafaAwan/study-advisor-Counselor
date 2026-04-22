@@ -13,12 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
-import { clearAuthToken, decodeAuthToken, getAuthToken } from "@/api/http";
+import { clearAuthToken } from "@/api/http";
 import {
   getCounselorNotifications,
   markNotificationRead,
   startCounselorNotificationStream,
 } from "@/api/counselorNotifications";
+import { useCounselorIdentity } from "@/hooks/useCounselorIdentity";
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -27,16 +28,7 @@ interface NavbarProps {
 const Navbar = ({ onToggleSidebar }: NavbarProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const payload = decodeAuthToken(getAuthToken());
-  const email = payload?.email || "Counselor";
-  const initials =
-    String(email)
-      .split("@")[0]
-      .split(/[._-]/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part.charAt(0).toUpperCase())
-      .join("") || "C";
+  const { identity } = useCounselorIdentity();
 
   const { data: notificationsData } = useQuery({
     queryKey: ["navbar-counselor-notifications"],
@@ -98,6 +90,7 @@ const Navbar = ({ onToggleSidebar }: NavbarProps) => {
 
   const handleLogout = () => {
     clearAuthToken();
+    queryClient.removeQueries({ queryKey: ["counselor-identity"] });
     navigate("/login", { replace: true });
   };
 
@@ -188,10 +181,12 @@ const Navbar = ({ onToggleSidebar }: NavbarProps) => {
         </DropdownMenu>
         <div className="flex items-center gap-2.5 pl-3 border-l border-border">
           <div className="h-9 w-9 rounded-full gradient-primary flex items-center justify-center text-sm font-semibold text-primary-foreground">
-            {initials}
+            {identity.initials}
           </div>
           <div className="hidden md:block">
-            <p className="text-sm font-semibold leading-tight">{email}</p>
+            <p className="text-sm font-semibold leading-tight">
+              {identity.displayName}
+            </p>
             <p className="text-xs text-muted-foreground leading-tight">
               Counselor
             </p>

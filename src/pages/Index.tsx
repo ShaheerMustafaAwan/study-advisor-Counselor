@@ -8,6 +8,7 @@ import RecentActivity, {
   type DashboardActivityItem,
 } from "@/components/dashboard/RecentActivity";
 import { useCounselorStudents } from "@/hooks/useCounselorStudents";
+import { useCounselorIdentity } from "@/hooks/useCounselorIdentity";
 import { getSopReviews } from "@/api/counselorSop";
 import { getCounselorNotifications } from "@/api/counselorNotifications";
 
@@ -23,6 +24,7 @@ const toInitials = (name?: string) => {
 
 const Index = () => {
   const { data: studentsData } = useCounselorStudents({ page: 1, limit: 100 });
+  const { identity } = useCounselorIdentity();
 
   const { data: sopData } = useQuery({
     queryKey: ["dashboard-sop-reviews"],
@@ -79,7 +81,10 @@ const Index = () => {
 
   return (
     <CounselorLayout>
-      <WelcomeBanner stats={welcomeStats} />
+      <WelcomeBanner
+        counselorName={identity.displayName}
+        stats={welcomeStats}
+      />
       <FeatureCards counts={featureCounts} />
       <RecentActivity activities={activities} />
     </CounselorLayout>

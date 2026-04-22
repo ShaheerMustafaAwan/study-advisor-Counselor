@@ -138,7 +138,7 @@ const UniversitySearch = () => {
     [browseUniversities],
   );
 
-  const filtered = useMemo(() => {
+  const filteredUniversities = useMemo(() => {
     const source = activeTab === "recommended" ? recommendedCards : browseCards;
 
     const filteredCards = source.filter((u) => {
@@ -197,25 +197,26 @@ const UniversitySearch = () => {
   const stats = [
     {
       label: "Recommended Results",
-      value: recommendedCards.length,
+      value: filteredUniversities.length,
       icon: Sparkles,
       color: "text-primary",
     },
     {
       label: "Browse Universities",
-      value: browseCards.length,
+      value: browseUniversities.length,
       icon: Building2,
       color: "text-accent",
     },
     {
       label: "Countries Available",
-      value: countries.length,
+      value: new Set(browseUniversities.map((university) => university.country))
+        .size,
       icon: Globe,
       color: "text-emerald-500",
     },
     {
       label: "Visible Results",
-      value: filtered.length,
+      value: filteredUniversities.length,
       icon: Search,
       color: "text-amber-500",
     },
@@ -865,7 +866,7 @@ const UniversitySearch = () => {
 
         {!showLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {filtered.map((uni) => (
+            {filteredUniversities.map((uni) => (
               <Card
                 key={uni.id}
                 className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex flex-col"
@@ -993,7 +994,7 @@ const UniversitySearch = () => {
           </div>
         )}
 
-        {!showLoading && filtered.length === 0 && (
+        {!showLoading && filteredUniversities.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">
             <Search className="h-12 w-12 mx-auto mb-3 opacity-40" />
             <p className="text-lg font-medium">

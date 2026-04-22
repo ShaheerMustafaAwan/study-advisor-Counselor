@@ -197,6 +197,87 @@ export interface UniversityUiCard {
   eligibilityScore: number | null;
 }
 
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function normalizeCountry(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function meetsMandatoryConstraints(
+  university: UniversityListResponse,
+  profile: StudentProfileRequest,
+): boolean {
+  const legacyPreferredCountry = (profile as { preferredCountry?: unknown })
+    .preferredCountry;
+
+  const preferredCountrySources = [
+    ...(Array.isArray(profile.preferred_countries)
+      ? profile.preferred_countries
+      : []),
+    typeof legacyPreferredCountry === "string" ? legacyPreferredCountry : "",
+  ];
+
+  const normalizedPreferredCountries = preferredCountrySources
+    .flatMap((country) => String(country || "").split(","))
+    .map((country) => normalizeCountry(country))
+    .filter(Boolean);
+
+  if (normalizedPreferredCountries.length > 0) {
+    const matchesCountry = normalizedPreferredCountries.includes(
+      normalizeCountry(university.country),
+    );
+
+    if (!matchesCountry) {
+      return false;
+    }
+  }
+
+  if (
+    isFiniteNumber(profile.budget_usd) &&
+    university.tuition_fee_usd > profile.budget_usd
+  ) {
+    return false;
+  }
+
+  if (!isFiniteNumber(profile.gpa) || profile.gpa < university.min_gpa) {
+    return false;
+  }
+
+  if (isFiniteNumber(university.min_ielts)) {
+    if (!isFiniteNumber(profile.ielts_score)) {
+      return false;
+    }
+
+    if (profile.ielts_score < university.min_ielts) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function rankRecommendations(
+  recommendations: UniversityRecommendationResponse[],
+): UniversityRecommendationResponse[] {
+  return [...recommendations].sort((a, b) => {
+    if (b.final_score !== a.final_score) {
+      return b.final_score - a.final_score;
+    }
+
+    if (b.match_score !== a.match_score) {
+      return b.match_score - a.match_score;
+    }
+
+    if (b.eligibility_score !== a.eligibility_score) {
+      return b.eligibility_score - a.eligibility_score;
+    }
+
+    return b.similarity_score - a.similarity_score;
+  });
+}
+
 function formatRequirements(university: UniversityListResponse): string {
   const parts: string[] = [];
 
@@ -274,7 +355,25 @@ export const universityRecommendationsApi = {
       }),
     });
 
-    return (await response.json()) as RecommendationResponse;
+    const payload = (await response.json()) as RecommendationResponse;
+    const incomingRecommendations = Array.isArray(payload.recommendations)
+      ? payload.recommendations
+      : [];
+
+    const constrainedRecommendations = incomingRecommendations.filter((item) =>
+      meetsMandatoryConstraints(item.university, studentProfile),
+    );
+
+    const rankedRecommendations = rankRecommendations(
+      constrainedRecommendations,
+    );
+    const normalizedTopK = Math.max(1, Math.floor(topK));
+
+    return {
+      ...payload,
+      recommendations: rankedRecommendations.slice(0, normalizedTopK),
+      total_considered: constrainedRecommendations.length,
+    };
   },
 
   async getUniversities(filters?: {

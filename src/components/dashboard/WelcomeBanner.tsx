@@ -1,6 +1,7 @@
 import { Users, FileText, Clock, CheckCircle2 } from "lucide-react";
 
 interface WelcomeBannerProps {
+  counselorName: string;
   stats: {
     totalStudents: number;
     activeApplications: number;
@@ -28,13 +29,13 @@ const toStatItems = (stats: WelcomeBannerProps["stats"]) => [
   },
 ];
 
-const WelcomeBanner = ({ stats }: WelcomeBannerProps) => {
+const WelcomeBanner = ({ counselorName, stats }: WelcomeBannerProps) => {
   const items = toStatItems(stats);
 
   return (
     <div className="rounded-2xl gradient-hero p-8 md:p-10 text-primary-foreground shadow-lg">
       <h1 className="text-2xl md:text-3xl font-bold mb-1">
-        Welcome, Counselor 👋
+        Welcome back, {counselorName}
       </h1>
       <p className="text-primary-foreground/80 text-sm md:text-base mb-8">
         Manage your students and track their progress
