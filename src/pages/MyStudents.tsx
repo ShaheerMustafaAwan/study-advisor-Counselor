@@ -43,6 +43,13 @@ const MyStudents = () => {
     });
   }, [data?.students, search, status, program]);
 
+  const activeAssignedCount = useMemo(
+    () =>
+      (data?.students ?? []).filter((student) => student.status !== "Completed")
+        .length,
+    [data?.students],
+  );
+
   const statusOptions = useMemo(
     () => [
       { value: "all" as const, label: "All Status" },
@@ -69,20 +76,27 @@ const MyStudents = () => {
     availablePrograms: [],
   };
 
+  const visibleStats = {
+    ...stats,
+    active: activeAssignedCount,
+  };
+
   const errorMessage =
     error instanceof Error ? error.message : "Failed to load students";
 
   return (
     <CounselorLayout>
       <div className="rounded-2xl gradient-surface border border-white/70 p-5 md:p-6 shadow-soft">
-        <h1 className="text-2xl font-bold text-foreground">Student Management</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          Student Management
+        </h1>
         <p className="text-muted-foreground mt-1">
           Track profile quality, progress, and counselor action items from one
           workspace.
         </p>
       </div>
 
-      <StudentStatsCards stats={stats} />
+      <StudentStatsCards stats={visibleStats} />
 
       <Card className="rounded-2xl glass-card">
         <CardHeader>

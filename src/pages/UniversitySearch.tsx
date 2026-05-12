@@ -46,7 +46,8 @@ import {
   Star,
 } from "lucide-react";
 import { toast } from "sonner";
-import { students } from "@/data/students";
+import { useCounselorStudents } from "@/hooks/useCounselorStudents";
+import { allPrograms, countries } from "@/data/universities";
 import {
   convertToUniversityUiCard,
   type StudentProfileRequest,
@@ -71,13 +72,17 @@ const DEFAULT_PROFILE: StudentProfileRequest = {
   study_mode: "FULL_TIME",
 };
 
+const FIELD_OF_STUDY_OPTIONS = [...allPrograms].sort((a, b) =>
+  a.localeCompare(b),
+);
+const COUNTRY_OPTIONS = [...countries].sort((a, b) => a.localeCompare(b));
+
 const UniversitySearch = () => {
   const [activeTab, setActiveTab] = useState<"recommended" | "browse">(
     "recommended",
   );
   const [isProfileFormOpen, setIsProfileFormOpen] = useState(true);
   const [profileTopK, setProfileTopK] = useState("10");
-  const [preferredCountriesInput, setPreferredCountriesInput] = useState("");
   const [studentProfile, setStudentProfile] =
     useState<StudentProfileRequest>(DEFAULT_PROFILE);
 
@@ -107,6 +112,11 @@ const UniversitySearch = () => {
       setActiveTab("recommended");
       setIsProfileFormOpen(false);
     },
+  });
+
+  const { data: counselorStudentsData } = useCounselorStudents({
+    page: 1,
+    limit: 200,
   });
 
   const {
@@ -221,20 +231,6 @@ const UniversitySearch = () => {
       color: "text-amber-500",
     },
   ];
-
-  const updatePreferredCountries = (input: string) => {
-    setPreferredCountriesInput(input);
-
-    const parsed = input
-      .split(",")
-      .map((country) => country.trim())
-      .filter(Boolean);
-
-    setStudentProfile((prev) => ({
-      ...prev,
-      preferred_countries: parsed,
-    }));
-  };
 
   const updateNumericField = (
     key:
@@ -399,10 +395,7 @@ const UniversitySearch = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat) => (
-            <Card
-              key={stat.label}
-              className="glass-card glass-card-hover"
-            >
+            <Card key={stat.label} className="glass-card glass-card-hover">
               <CardContent className="p-5 flex items-center gap-4">
                 <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center">
                   <stat.icon className={`h-5 w-5 ${stat.color}`} />
@@ -634,30 +627,52 @@ const UniversitySearch = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="field">Field of Study</Label>
-                  <Input
-                    id="field"
+                  <Label>Field of Study</Label>
+                  <Select
                     value={studentProfile.field_of_study}
-                    onChange={(e) =>
+                    onValueChange={(value) =>
                       setStudentProfile((prev) => ({
                         ...prev,
-                        field_of_study: e.target.value,
+                        field_of_study: value,
                       }))
                     }
-                    placeholder="e.g. Computer Science"
-                  />
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select field of study" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FIELD_OF_STUDY_OPTIONS.map((field) => (
+                        <SelectItem key={field} value={field}>
+                          {field}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="countries">
-                    Preferred Countries (comma separated)
-                  </Label>
-                  <Input
-                    id="countries"
-                    value={preferredCountriesInput}
-                    onChange={(e) => updatePreferredCountries(e.target.value)}
-                    placeholder="Canada, Germany, Australia"
-                  />
+                  <Label>Preferred Country</Label>
+                  <Select
+                    value={studentProfile.preferred_countries[0] ?? "all"}
+                    onValueChange={(value) =>
+                      setStudentProfile((prev) => ({
+                        ...prev,
+                        preferred_countries: value === "all" ? [] : [value],
+                      }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Any country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Any country</SelectItem>
+                      {COUNTRY_OPTIONS.map((country) => (
+                        <SelectItem key={country} value={country}>
+                          {country}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -1038,7 +1053,7 @@ const UniversitySearch = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {students.map((student) => (
+            {(counselorStudentsData?.students ?? []).map((student) => (
               <button
                 key={student.id}
                 onClick={() => handleRecommend(student.name)}
@@ -1060,6 +1075,12 @@ const UniversitySearch = () => {
                 </div>
               </button>
             ))}
+            {(!counselorStudentsData?.students ||
+              counselorStudentsData.students.length === 0) && (
+              <div className="text-sm text-muted-foreground p-3">
+                No assigned students found.
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>

@@ -53,16 +53,24 @@ const Index = () => {
     availablePrograms: [],
   };
 
+  const activeApplicationsCount = useMemo(
+    () =>
+      (studentsData?.students ?? []).filter(
+        (student) => student.status !== "Completed",
+      ).length,
+    [studentsData?.students],
+  );
+
   const welcomeStats = {
     totalStudents: studentsSummary.total,
-    activeApplications: studentsSummary.active,
+    activeApplications: activeApplicationsCount,
     pendingReviews: studentsSummary.reviewNeeded,
     completedCases: studentsSummary.completed,
   };
 
   const featureCounts = {
     students: studentsSummary.total,
-    studentProgress: studentsSummary.active,
+    studentProgress: activeApplicationsCount,
     sopReview: sopData?.reviews.length || 0,
     notifications: notificationsData?.unreadCount || 0,
     universitySearch: studentsSummary.availablePrograms.length,
@@ -86,7 +94,10 @@ const Index = () => {
     { title: "Profile Audit", detail: "Evaluate academics and budget fit." },
     { title: "University Match", detail: "Shortlist best-fit destinations." },
     { title: "Documents & SOP", detail: "Improve quality for admissions." },
-    { title: "Visa Readiness", detail: "Track final milestones and timelines." },
+    {
+      title: "Visa Readiness",
+      detail: "Track final milestones and timelines.",
+    },
   ];
 
   const destinationCards = [
@@ -159,12 +170,16 @@ const Index = () => {
               />
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Unread notifications</span>
+              <span className="text-muted-foreground">
+                Unread notifications
+              </span>
               <Badge>{featureCounts.notifications}</Badge>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Programs tracked</span>
-              <Badge variant="secondary">{featureCounts.universitySearch}</Badge>
+              <Badge variant="secondary">
+                {featureCounts.universitySearch}
+              </Badge>
             </div>
           </CardContent>
         </Card>
