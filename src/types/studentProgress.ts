@@ -25,6 +25,7 @@ export interface University {
   note?: string | null;
   updatedAt?: string | null;
   matchScore?: number;
+  source?: "recommended" | "shortlisted";
   status:
     | "Considering"
     | "Shortlisted"

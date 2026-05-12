@@ -98,6 +98,7 @@ export interface CounselorStudentUniversityApi {
   reasons: string[];
   tuitionFeeUsd: number | null;
   worldRanking: number | null;
+  source?: "recommended" | "shortlisted";
 }
 
 interface CounselorStudentsApiResponse {

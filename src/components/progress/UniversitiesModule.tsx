@@ -56,6 +56,7 @@ const UniversitiesModule = ({ studentId, universities: initial }: Props) => {
         note: uni.note,
         updatedAt: uni.updatedAt,
         matchScore: uni.matchScore,
+        source: uni.source,
       })),
     );
   }, [data]);
@@ -150,6 +151,11 @@ const UniversitiesModule = ({ studentId, universities: initial }: Props) => {
               </div>
             </div>
             <div className="flex items-center gap-3 shrink-0">
+              {uni.source === "shortlisted" && (
+                <Badge className="bg-emerald-100 text-emerald-700 border-0">
+                  Student Shortlisted
+                </Badge>
+              )}
               <Badge className={statusColors[uni.status]}>{uni.status}</Badge>
               <Select
                 value={uni.status}

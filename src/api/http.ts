@@ -1,8 +1,4 @@
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000/api";
-
-export const AUTH_TOKEN_STORAGE_KEY =
-  import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY ?? "token";
+export { API_BASE_URL, AUTH_TOKEN_STORAGE_KEY } from "./config";
 
 export interface AuthTokenPayload {
   id?: number;

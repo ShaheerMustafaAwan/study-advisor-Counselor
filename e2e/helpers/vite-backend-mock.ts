@@ -1,5 +1,11 @@
 import type { Page, Route } from "@playwright/test";
 
+const configuredApiBaseUrl = process.env.VITE_API_BASE_URL?.trim();
+const configuredApiBase = configuredApiBaseUrl
+  ? new URL(configuredApiBaseUrl)
+  : null;
+const configuredApiPath = configuredApiBase?.pathname.replace(/\/+$/, "") || "";
+
 function base64UrlEncode(input: string | Buffer) {
   const buf = Buffer.isBuffer(input) ? input : Buffer.from(input, "utf8");
   return buf
@@ -22,13 +28,11 @@ export function buildUnsignedCounselorJwt() {
 }
 
 function isBackendApi(url: URL) {
-  const host = url.hostname;
-  return (
-    host === "localhost" ||
-    host === "127.0.0.1" ||
-    host === "[::1]" ||
-    host === "::1"
-  );
+  return Boolean(configuredApiBase && url.origin === configuredApiBase.origin);
+}
+
+function isApiPath(url: URL, path: string) {
+  return url.pathname === `${configuredApiPath}${path}`;
 }
 
 const jsonHeaders = {
@@ -122,11 +126,9 @@ export async function installCounselorDashboardMocks(
       return;
     }
 
-    const pathname = url.pathname;
-
     if (
       options?.interceptCounselorLogin &&
-      pathname === "/api/auth/login" &&
+      isApiPath(url, "/auth/login") &&
       method === "POST"
     ) {
       await fulfillJson(route, {
@@ -143,14 +145,14 @@ export async function installCounselorDashboardMocks(
       return;
     }
 
-    if (pathname === "/api/profile" && method === "GET") {
+    if (isApiPath(url, "/profile") && method === "GET") {
       await fulfillJson(route, profileBody);
       return;
     }
 
     if (
-      pathname === "/api/counselor/students" ||
-      pathname.startsWith("/api/counselor/students?")
+      isApiPath(url, "/counselor/students") ||
+      url.pathname.startsWith(`${configuredApiPath}/counselor/students?`)
     ) {
       if (method === "GET") {
         await fulfillJson(route, studentsListBody);
@@ -159,8 +161,8 @@ export async function installCounselorDashboardMocks(
     }
 
     if (
-      pathname === "/api/counselor/sop-reviews" ||
-      pathname.startsWith("/api/counselor/sop-reviews?")
+      isApiPath(url, "/counselor/sop-reviews") ||
+      url.pathname.startsWith(`${configuredApiPath}/counselor/sop-reviews?`)
     ) {
       if (method === "GET") {
         await fulfillJson(route, sopReviewsBody);
@@ -169,8 +171,8 @@ export async function installCounselorDashboardMocks(
     }
 
     if (
-      pathname === "/api/counselor/notifications" ||
-      pathname.startsWith("/api/counselor/notifications?")
+      isApiPath(url, "/counselor/notifications") ||
+      url.pathname.startsWith(`${configuredApiPath}/counselor/notifications?`)
     ) {
       if (method === "GET") {
         await fulfillJson(route, notificationsBody);
@@ -198,7 +200,7 @@ export async function mockNonCounselorLogin(page: Page) {
       return;
     }
 
-    if (url.pathname === "/api/auth/login" && method === "POST") {
+    if (isApiPath(url, "/auth/login") && method === "POST") {
       await fulfillJson(route, {
         status: "success",
         message: "ok",
