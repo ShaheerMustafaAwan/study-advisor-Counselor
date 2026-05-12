@@ -16,29 +16,33 @@ const StudentStatsCards = ({ stats }: StudentStatsCardsProps) => {
       title: "Total Students",
       count: stats.total,
       icon: Users,
-      accent: "text-primary",
-      bg: "bg-primary/10",
+      accent: "text-primary-foreground",
+      bg: "gradient-primary",
+      note: "All assigned profiles",
     },
     {
       title: "Active",
       count: stats.active,
       icon: TrendingUp,
-      accent: "text-blue-600",
-      bg: "bg-blue-50",
+      accent: "text-primary-foreground",
+      bg: "bg-gradient-to-br from-cyan-500 to-blue-500",
+      note: "In application pipeline",
     },
     {
       title: "Need Review",
       count: stats.reviewNeeded,
       icon: AlertTriangle,
-      accent: "text-orange-500",
-      bg: "bg-orange-50",
+      accent: "text-primary-foreground",
+      bg: "bg-gradient-to-br from-amber-500 to-orange-500",
+      note: "Waiting counselor actions",
     },
     {
       title: "Completed",
       count: stats.completed,
       icon: CheckCircle,
-      accent: "text-green-600",
-      bg: "bg-green-50",
+      accent: "text-primary-foreground",
+      bg: "bg-gradient-to-br from-emerald-500 to-green-500",
+      note: "Successfully concluded",
     },
   ];
 
@@ -47,15 +51,16 @@ const StudentStatsCards = ({ stats }: StudentStatsCardsProps) => {
       {cards.map((s) => (
         <Card
           key={s.title}
-          className="p-5 flex items-center justify-between rounded-xl border border-border hover:shadow-md transition-shadow"
+          className="p-5 flex items-center justify-between rounded-2xl glass-card glass-card-hover"
         >
           <div>
             <p className="text-sm text-muted-foreground font-medium">
               {s.title}
             </p>
             <p className="text-3xl font-bold text-foreground mt-1">{s.count}</p>
+            <p className="text-xs text-muted-foreground mt-1">{s.note}</p>
           </div>
-          <div className={`${s.bg} ${s.accent} p-3 rounded-xl`}>
+          <div className={`${s.bg} ${s.accent} p-3 rounded-xl shadow-md`}>
             <s.icon className="h-6 w-6" />
           </div>
         </Card>

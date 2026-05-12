@@ -22,7 +22,7 @@ const statusConfig: Record<Stage["status"], { icon: typeof CheckCircle2; color: 
 
 const OverallProgressCard = ({ progress, stages }: Props) => {
   return (
-    <Card className="shadow-card hover:shadow-card-hover transition-shadow">
+    <Card className="glass-card glass-card-hover">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg">Application Progress</CardTitle>
       </CardHeader>
@@ -42,7 +42,7 @@ const OverallProgressCard = ({ progress, stages }: Props) => {
             return (
               <div
                 key={stage.label}
-                className="flex items-center justify-between rounded-xl bg-secondary/50 px-4 py-3"
+                className="flex items-center justify-between rounded-xl bg-white/75 border border-primary/10 px-4 py-3"
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`h-4 w-4 ${config.color} ${stage.status === "Active" ? "animate-spin" : ""}`} />

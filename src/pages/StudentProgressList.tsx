@@ -25,7 +25,7 @@ const StudentProgressList = () => {
 
   return (
     <CounselorLayout>
-      <div>
+      <div className="rounded-2xl gradient-surface border border-white/70 p-5 md:p-6 shadow-soft">
         <h1 className="text-2xl font-bold text-foreground">Student Progress</h1>
         <p className="text-sm text-muted-foreground mt-1">
           {isLoading
@@ -38,7 +38,7 @@ const StudentProgressList = () => {
 
       <div className="grid gap-3">
         {!isLoading && students.length === 0 && (
-          <Card className="shadow-card">
+          <Card className="glass-card">
             <CardContent className="p-6 text-sm text-muted-foreground">
               No students found.
             </CardContent>
@@ -47,7 +47,7 @@ const StudentProgressList = () => {
         {students.map((s) => (
           <Card
             key={s.id}
-            className="shadow-card hover:shadow-card-hover transition-all cursor-pointer hover:border-primary/20"
+            className="glass-card glass-card-hover cursor-pointer hover:border-primary/20"
             onClick={() => navigate(`/dashboard/student-progress/${s.id}`)}
           >
             <CardContent className="p-4 flex items-center gap-4">

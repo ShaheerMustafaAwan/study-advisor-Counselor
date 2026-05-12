@@ -217,7 +217,7 @@ const SOPReviewDetail = () => {
     <CounselorLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 rounded-2xl gradient-surface border border-white/70 p-4">
           <Button
             variant="ghost"
             size="icon"
@@ -227,7 +227,7 @@ const SOPReviewDetail = () => {
           </Button>
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+              <AvatarFallback className="gradient-primary text-primary-foreground font-semibold">
                 {toInitials(review.user?.fullName)}
               </AvatarFallback>
             </Avatar>
@@ -250,7 +250,7 @@ const SOPReviewDetail = () => {
         {/* Two-panel layout */}
         <div className="grid lg:grid-cols-3 gap-4">
           {/* Left — SOP Content */}
-          <Card className="lg:col-span-2 shadow-card">
+          <Card className="lg:col-span-2 glass-card">
             <CardHeader className="pb-3 flex-row items-center justify-between">
               <CardTitle className="text-base">Statement of Purpose</CardTitle>
               <Button
@@ -275,7 +275,7 @@ const SOPReviewDetail = () => {
               </Button>
             </CardHeader>
             <CardContent>
-              <div className="rounded-xl bg-secondary/50 p-5 text-sm leading-relaxed text-foreground whitespace-pre-line max-h-[500px] overflow-y-auto">
+              <div className="rounded-xl bg-white/80 border border-primary/10 p-5 text-sm leading-relaxed text-foreground whitespace-pre-line max-h-[500px] overflow-y-auto">
                 {review.content ||
                   "No SOP text content available. Please use the Download button to read the uploaded file."}
               </div>
@@ -291,7 +291,7 @@ const SOPReviewDetail = () => {
           </Card>
 
           {/* Right — Actions */}
-          <Card className="shadow-card">
+          <Card className="glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Counselor Actions</CardTitle>
             </CardHeader>
@@ -374,7 +374,7 @@ const SOPReviewDetail = () => {
           </Card>
         </div>
 
-        <Card className="shadow-card">
+        <Card className="glass-card">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Review Comments</CardTitle>
           </CardHeader>
@@ -383,7 +383,7 @@ const SOPReviewDetail = () => {
               <p className="text-sm text-muted-foreground">No comments yet.</p>
             )}
             {sortedComments.map((comment) => (
-              <div key={comment.id} className="rounded-lg border p-3">
+              <div key={comment.id} className="rounded-xl border border-primary/10 bg-white/75 p-3">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-medium text-foreground">
                     {comment.author?.fullName || "Counselor"}

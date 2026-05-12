@@ -12,11 +12,11 @@ const statusStyle: Record<string, string> = {
 };
 
 const StudentRowComponent = ({ student }: { student: Student }) => (
-  <TableRow className="hover:bg-muted/40 transition-colors">
+  <TableRow className="hover:bg-primary/5 transition-colors">
     <TableCell>
       <div className="flex items-center gap-3">
         <Avatar className="h-9 w-9">
-          <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+          <AvatarFallback className="gradient-primary text-primary-foreground text-xs font-semibold shadow-sm">
             {student.avatarInitials}
           </AvatarFallback>
         </Avatar>
@@ -34,14 +34,14 @@ const StudentRowComponent = ({ student }: { student: Student }) => (
     <TableCell>
       <Badge
         variant="outline"
-        className={`${statusStyle[student.status]} font-medium text-xs`}
+        className={`${statusStyle[student.status]} font-medium text-xs rounded-full`}
       >
         {student.status}
       </Badge>
     </TableCell>
     <TableCell>
       <div className="flex items-center gap-2 min-w-[120px]">
-        <Progress value={student.progress} className="h-2 flex-1" />
+        <Progress value={student.progress} className="h-2.5 flex-1" />
         <span className="text-xs text-muted-foreground w-8 text-right">
           {student.progress}%
         </span>

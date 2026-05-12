@@ -71,19 +71,21 @@ const FeatureCards = ({ counts }: FeatureCardsProps) => {
       {features.map((feature) => (
         <div
           key={feature.title}
-          className="group bg-card rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-border"
+          className="group glass-card glass-card-hover rounded-2xl p-6 border border-white/70"
         >
           <div className="flex items-start justify-between mb-4">
             <div
-              className={`h-11 w-11 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-sm`}
+              className={`h-11 w-11 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-110`}
             >
               <feature.icon className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xs font-semibold bg-secondary text-muted-foreground px-2.5 py-1 rounded-full">
+            <span className="text-xs font-semibold bg-primary/10 text-primary px-2.5 py-1 rounded-full">
               {feature.count}
             </span>
           </div>
-          <h3 className="text-base font-semibold mb-1">{feature.title}</h3>
+          <h3 className="text-base font-semibold mb-1 text-foreground">
+            {feature.title}
+          </h3>
           <p className="text-sm text-muted-foreground mb-5">
             {feature.description}
           </p>
@@ -93,7 +95,8 @@ const FeatureCards = ({ counts }: FeatureCardsProps) => {
             className="w-full gap-1.5 rounded-xl"
             onClick={() => navigate(feature.route)}
           >
-            Open <ArrowRight className="h-3.5 w-3.5" />
+            Open{" "}
+            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
         </div>
       ))}

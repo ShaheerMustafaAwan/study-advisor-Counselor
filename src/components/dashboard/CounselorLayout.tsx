@@ -11,7 +11,7 @@ const CounselorLayout = ({ children }: CounselorLayoutProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen dashboard-shell-bg">
       <Navbar onToggleSidebar={() => setSidebarCollapsed((c) => !c)} />
       <DashboardSidebar collapsed={sidebarCollapsed} />
       <main
@@ -20,7 +20,9 @@ const CounselorLayout = ({ children }: CounselorLayoutProps) => {
           sidebarCollapsed ? "pl-[4.5rem]" : "pl-60"
         )}
       >
-        <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">{children}</div>
+        <div className="p-5 md:p-8 max-w-7xl mx-auto space-y-8">
+          {children}
+        </div>
       </main>
     </div>
   );

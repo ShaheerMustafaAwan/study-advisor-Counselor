@@ -1,57 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 224 30% 15%;
+    --background: 220 34% 97%;
+    --foreground: 224 38% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 224 30% 15%;
+    --card-foreground: 224 38% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 224 30% 15%;
+    --popover-foreground: 224 38% 14%;
 
-    --primary: 226 70% 55%;
+    --primary: 224 78% 56%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 224 30% 15%;
+    --secondary: 220 24% 95%;
+    --secondary-foreground: 224 34% 22%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 220 28% 96%;
+    --muted-foreground: 222 14% 42%;
 
-    --accent: 243 60% 55%;
+    --accent: 261 62% 57%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 56%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 226 70% 55%;
+    --border: 220 24% 88%;
+    --input: 220 22% 90%;
+    --ring: 224 78% 56%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(226, 70%, 55%), hsl(243, 60%, 55%));
-    --gradient-hero: linear-gradient(135deg, hsl(226, 70%, 55%), hsl(250, 65%, 50%));
-    --gradient-hero-subtle: linear-gradient(135deg, hsl(226, 70%, 55%), hsl(243, 60%, 55%), hsl(260, 55%, 50%));
-    --shadow-card: 0 1px 3px 0 hsl(220 13% 91% / 0.4), 0 1px 2px -1px hsl(220 13% 91% / 0.4);
-    --shadow-card-hover: 0 10px 25px -5px hsl(226 70% 55% / 0.1), 0 8px 10px -6px hsl(226 70% 55% / 0.05);
+    --gradient-primary: linear-gradient(135deg, hsl(224 78% 56%), hsl(255 66% 58%));
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(224 78% 56%) 0%,
+      hsl(245 68% 57%) 52%,
+      hsl(268 63% 58%) 100%
+    );
+    --gradient-hero-subtle: radial-gradient(circle at 15% 20%, hsl(206 100% 95%) 0%, hsl(250 100% 98%) 50%, hsl(0 0% 100%) 100%);
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100% / 0.92) 0%, hsl(230 50% 99% / 0.82) 100%);
+    --shadow-card: 0 10px 24px -18px hsl(224 78% 56% / 0.35), 0 8px 18px -12px hsl(228 20% 35% / 0.16);
+    --shadow-card-hover: 0 22px 45px -28px hsl(224 78% 56% / 0.55), 0 16px 30px -22px hsl(228 24% 28% / 0.24);
+    --shadow-soft: 0 8px 28px -20px hsl(228 26% 28% / 0.3);
     --navbar-height: 4rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 10% 46%;
-    --sidebar-primary: 226 70% 55%;
+    --sidebar-background: 226 48% 99%;
+    --sidebar-foreground: 224 16% 40%;
+    --sidebar-primary: 224 78% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 226 70% 97%;
-    --sidebar-accent-foreground: 226 70% 55%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 226 70% 55%;
+    --sidebar-accent: 225 95% 96%;
+    --sidebar-accent-foreground: 224 76% 48%;
+    --sidebar-border: 220 26% 90%;
+    --sidebar-ring: 224 78% 56%;
   }
 }
 
@@ -59,9 +65,18 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased min-h-screen;
     font-family: 'Inter', system-ui, sans-serif;
+    background-image:
+      radial-gradient(circle at 14% 12%, hsl(213 100% 96% / 0.9), transparent 34%),
+      radial-gradient(circle at 84% 0%, hsl(253 100% 96% / 0.75), transparent 36%),
+      radial-gradient(circle at 92% 88%, hsl(200 100% 96% / 0.65), transparent 33%);
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.18);
   }
 }
 
@@ -70,12 +85,93 @@
     background: var(--gradient-primary);
   }
   .gradient-hero {
-    background: var(--gradient-hero-subtle);
+    background: var(--gradient-hero);
   }
+
+  .gradient-surface {
+    background: var(--gradient-surface);
+  }
+
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
+
   .shadow-card-hover {
     box-shadow: var(--shadow-card-hover);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .glass-card {
+    @apply border border-white/55 bg-white/85 backdrop-blur-sm;
+    box-shadow: var(--shadow-card);
+  }
+
+  .glass-card-hover {
+    @apply transition-all duration-300 hover:-translate-y-0.5;
+    box-shadow: var(--shadow-card);
+  }
+
+  .glass-card-hover:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .dashboard-shell-bg {
+    background-image:
+      radial-gradient(circle at 7% 8%, hsl(213 100% 94% / 0.75), transparent 34%),
+      radial-gradient(circle at 90% 16%, hsl(257 100% 95% / 0.72), transparent 32%),
+      radial-gradient(circle at 87% 88%, hsl(198 100% 94% / 0.65), transparent 32%);
+  }
+
+  .hero-pattern {
+    background-image:
+      linear-gradient(120deg, hsl(0 0% 100% / 0.22) 0%, hsl(0 0% 100% / 0.03) 100%),
+      radial-gradient(circle at 86% 15%, hsl(0 0% 100% / 0.34), transparent 32%);
+  }
+
+  .image-placeholder {
+    @apply rounded-2xl border border-white/40 text-white/90;
+    background:
+      linear-gradient(145deg, hsl(223 77% 58% / 0.95), hsl(259 65% 58% / 0.92)),
+      repeating-linear-gradient(-45deg, hsl(0 0% 100% / 0.12), hsl(0 0% 100% / 0.12) 10px, hsl(0 0% 100% / 0.05) 10px, hsl(0 0% 100% / 0.05) 20px);
+  }
+
+  .image-placeholder-light {
+    @apply rounded-2xl border border-primary/15 text-primary/90;
+    background:
+      linear-gradient(160deg, hsl(223 100% 97%), hsl(254 100% 97%)),
+      repeating-linear-gradient(-45deg, hsl(223 78% 56% / 0.08), hsl(223 78% 56% / 0.08) 10px, hsl(260 63% 58% / 0.06) 10px, hsl(260 63% 58% / 0.06) 20px);
+  }
+
+  .section-title {
+    @apply text-2xl font-bold tracking-tight text-foreground;
+  }
+
+  .section-subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out both;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.7s ease-out both;
+  }
+
+  .animate-float-soft {
+    animation: float-soft 5.4s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2.2s linear infinite;
+    background-size: 200% 100%;
+    background-image: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.34), transparent);
+  }
+
+  .surface-divider {
+    @apply border border-white/50 bg-white/80 backdrop-blur-sm;
   }
 }

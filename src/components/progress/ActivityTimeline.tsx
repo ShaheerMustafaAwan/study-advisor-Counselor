@@ -23,6 +23,15 @@ const iconMap: Record<
 };
 
 const ActivityTimeline = ({ activities }: Props) => {
+  if (!activities.length) {
+    return (
+      <div className="rounded-xl border border-primary/10 bg-white/70 p-6 text-sm text-muted-foreground">
+        No activity yet. Suggested image for this section: checklist timeline
+        illustration for admissions milestones.
+      </div>
+    );
+  }
+
   return (
     <div className="relative space-y-0">
       {activities.map((activity, i) => {
@@ -32,7 +41,7 @@ const ActivityTimeline = ({ activities }: Props) => {
         return (
           <div key={activity.id} className="flex gap-4 relative pb-6">
             {!isLast && (
-              <div className="absolute left-[19px] top-10 bottom-0 w-px bg-border" />
+              <div className="absolute left-[19px] top-10 bottom-0 w-px bg-primary/20" />
             )}
             <div
               className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${config.color}`}

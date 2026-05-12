@@ -131,7 +131,7 @@ const SOPModule = ({ studentId, sopContent }: Props) => {
 
   return (
     <div className="grid lg:grid-cols-3 gap-4">
-      <Card className="lg:col-span-2 shadow-card">
+      <Card className="lg:col-span-2 glass-card">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">Statement of Purpose</CardTitle>
@@ -141,13 +141,13 @@ const SOPModule = ({ studentId, sopContent }: Props) => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-xl bg-secondary/50 p-5 text-sm leading-relaxed text-foreground whitespace-pre-line max-h-[400px] overflow-y-auto">
+          <div className="rounded-xl bg-white/80 border border-primary/10 p-5 text-sm leading-relaxed text-foreground whitespace-pre-line max-h-[400px] overflow-y-auto">
             {sop.content || sopContent || "No SOP text content available."}
           </div>
         </CardContent>
       </Card>
 
-      <Card className="shadow-card">
+      <Card className="glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Counselor Actions</CardTitle>
         </CardHeader>

@@ -131,7 +131,7 @@ const UniversitiesModule = ({ studentId, universities: initial }: Props) => {
       {universities.map((uni) => (
         <Card
           key={uni.id}
-          className="shadow-card hover:shadow-card-hover transition-shadow"
+          className="glass-card glass-card-hover"
         >
           <CardContent className="p-4 flex items-center justify-between gap-4">
             <div className="min-w-0 flex-1">

@@ -376,24 +376,35 @@ const UniversitySearch = () => {
   return (
     <CounselorLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            University Recommendations
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Generate recommendations from runtime profile input and browse all
-            universities from the recommendation service.
-          </p>
+        <div className="relative overflow-hidden rounded-2xl border border-white/70 shadow-soft min-h-[148px] sm:min-h-[168px]">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-50"
+            style={{ backgroundImage: "url(/university-search.jpg)" }}
+            aria-hidden
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-slate-950/78 via-slate-900/55 to-slate-900/35"
+            aria-hidden
+          />
+          <div className="relative z-10 p-5 md:p-6 max-w-3xl">
+            <h1 className="text-2xl font-bold text-black/90 drop-shadow-sm">
+              University Recommendations
+            </h1>
+            <p className="mt-1.5 text-sm sm:text-base text-black-90 drop-shadow-sm">
+              Generate recommendations from runtime profile input and browse all
+              universities from the recommendation service.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat) => (
             <Card
               key={stat.label}
-              className="hover:shadow-md transition-shadow"
+              className="glass-card glass-card-hover"
             >
               <CardContent className="p-5 flex items-center gap-4">
-                <div className="h-11 w-11 rounded-xl bg-secondary flex items-center justify-center">
+                <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center">
                   <stat.icon className={`h-5 w-5 ${stat.color}`} />
                 </div>
                 <div>
@@ -407,7 +418,7 @@ const UniversitySearch = () => {
           ))}
         </div>
 
-        <Card>
+        <Card className="glass-card">
           <CardContent className="p-4 flex flex-wrap gap-3">
             <Button
               variant={activeTab === "recommended" ? "default" : "outline"}
@@ -437,7 +448,7 @@ const UniversitySearch = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-card">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -726,7 +737,7 @@ const UniversitySearch = () => {
           )}
         </Card>
 
-        <Card>
+        <Card className="glass-card">
           <CardContent className="p-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
               <div className="lg:col-span-2 relative">
@@ -814,7 +825,7 @@ const UniversitySearch = () => {
         </Card>
 
         {showLoading && (
-          <div className="rounded-lg border bg-card p-10 text-center">
+          <div className="rounded-2xl border border-white/70 bg-white/75 p-10 text-center">
             <Loader2 className="h-8 w-8 mx-auto mb-3 animate-spin text-primary" />
             <p className="font-medium text-foreground">
               {activeTab === "recommended"
@@ -852,7 +863,7 @@ const UniversitySearch = () => {
         {activeTab === "recommended" &&
           hasRecommendations &&
           !recommendationsLoading && (
-            <div className="rounded-lg border bg-card p-4 flex flex-wrap items-center gap-3 text-sm">
+            <div className="rounded-2xl border border-white/70 bg-white/75 p-4 flex flex-wrap items-center gap-3 text-sm">
               <Badge className="bg-primary/15 text-primary border-primary/20">
                 <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
                 Generated {recommendedCards.length} recommendations
@@ -869,7 +880,7 @@ const UniversitySearch = () => {
             {filteredUniversities.map((uni) => (
               <Card
                 key={uni.id}
-                className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex flex-col"
+                className="group glass-card glass-card-hover flex flex-col"
               >
                 <CardContent className="p-5 flex flex-col flex-1">
                   <div className="flex items-start justify-between mb-3">
@@ -995,7 +1006,7 @@ const UniversitySearch = () => {
         )}
 
         {!showLoading && filteredUniversities.length === 0 && (
-          <div className="text-center py-16 text-muted-foreground">
+          <div className="text-center py-16 text-muted-foreground rounded-2xl border border-white/70 bg-white/70">
             <Search className="h-12 w-12 mx-auto mb-3 opacity-40" />
             <p className="text-lg font-medium">
               {activeTab === "recommended"
@@ -1007,6 +1018,10 @@ const UniversitySearch = () => {
                 ? "Update the form and generate again to see different recommendations"
                 : "Try adjusting your search or filters"}
             </p>
+            <p className="text-xs mt-2">
+              Suggested illustration: student comparing international university
+              cards.
+            </p>
           </div>
         )}
       </div>
@@ -1015,7 +1030,7 @@ const UniversitySearch = () => {
         open={!!recommendModal}
         onOpenChange={() => setRecommendModal(null)}
       >
-        <DialogContent>
+        <DialogContent className="border-white/70 bg-white/95 backdrop-blur-sm">
           <DialogHeader>
             <DialogTitle>Recommend University</DialogTitle>
             <DialogDescription>

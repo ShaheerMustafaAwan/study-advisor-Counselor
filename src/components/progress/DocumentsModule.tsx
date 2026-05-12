@@ -101,10 +101,10 @@ const DocumentsModule = ({ studentId, documents: initialDocs }: Props) => {
   };
 
   return (
-    <div className="rounded-xl border border-border overflow-hidden">
+    <div className="rounded-2xl border border-white/70 bg-white/65 backdrop-blur-sm overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="bg-secondary/50">
+          <TableRow className="bg-primary/5">
             <TableHead>Document Name</TableHead>
             <TableHead>Upload Status</TableHead>
             <TableHead>Verification</TableHead>
@@ -115,7 +115,7 @@ const DocumentsModule = ({ studentId, documents: initialDocs }: Props) => {
         </TableHeader>
         <TableBody>
           {documents.map((doc) => (
-            <TableRow key={doc.id} className="hover:bg-secondary/30">
+            <TableRow key={doc.id} className="hover:bg-primary/5">
               <TableCell className="font-medium text-foreground">
                 {doc.name}
               </TableCell>

@@ -131,11 +131,11 @@ const SOPReviewList = () => {
           </TableRow>
         )}
         {items.map((sop) => (
-          <TableRow key={sop.id} className="hover:bg-muted/50">
+          <TableRow key={sop.id} className="hover:bg-primary/5">
             <TableCell>
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                  <AvatarFallback className="gradient-primary text-primary-foreground text-xs font-semibold">
                     {toInitials(sop.user?.fullName)}
                   </AvatarFallback>
                 </Avatar>
@@ -183,7 +183,7 @@ const SOPReviewList = () => {
     <CounselorLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
+        <div className="rounded-2xl gradient-surface border border-white/70 p-5 md:p-6 shadow-soft">
           <h1 className="text-2xl font-bold text-foreground">SOP Review</h1>
           <p className="text-muted-foreground mt-1">
             Review and manage student Statements of Purpose
@@ -205,7 +205,7 @@ const SOPReviewList = () => {
           {stats.map((s) => (
             <Card
               key={s.label}
-              className="shadow-card hover:shadow-card-hover transition-shadow"
+              className="glass-card glass-card-hover"
             >
               <CardContent className="p-5 flex items-center justify-between">
                 <div>
@@ -214,7 +214,7 @@ const SOPReviewList = () => {
                     {s.count}
                   </p>
                 </div>
-                <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <s.icon className={`h-5 w-5 ${s.color}`} />
                 </div>
               </CardContent>
@@ -223,13 +223,13 @@ const SOPReviewList = () => {
         </div>
 
         {/* Tabs */}
-        <Card className="shadow-card">
+        <Card className="glass-card">
           <CardHeader className="pb-0">
             <CardTitle className="text-lg">SOP Management</CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
             <Tabs value={tab} onValueChange={setTab}>
-              <TabsList>
+              <TabsList className="bg-primary/5">
                 <TabsTrigger value="pending">
                   Pending Review ({pending.length})
                 </TabsTrigger>
@@ -243,7 +243,9 @@ const SOPReviewList = () => {
                     Loading SOP reviews...
                   </p>
                 ) : (
-                  renderTable(pending, false)
+                  <div className="rounded-2xl border border-white/70 bg-white/65 overflow-auto">
+                    {renderTable(pending, false)}
+                  </div>
                 )}
               </TabsContent>
               <TabsContent value="reviewed" className="mt-4">
@@ -252,7 +254,9 @@ const SOPReviewList = () => {
                     Loading SOP reviews...
                   </p>
                 ) : (
-                  renderTable(reviewed, true)
+                  <div className="rounded-2xl border border-white/70 bg-white/65 overflow-auto">
+                    {renderTable(reviewed, true)}
+                  </div>
                 )}
               </TabsContent>
             </Tabs>

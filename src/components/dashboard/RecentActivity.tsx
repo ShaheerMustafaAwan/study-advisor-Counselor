@@ -21,14 +21,20 @@ interface RecentActivityProps {
 
 const RecentActivity = ({ activities }: RecentActivityProps) => {
   return (
-    <div className="bg-card rounded-2xl shadow-card border border-border overflow-hidden">
-      <div className="px-6 py-5 border-b border-border">
+    <div className="glass-card rounded-2xl overflow-hidden">
+      <div className="px-6 py-5 border-b border-border/70 bg-white/65">
         <h2 className="text-lg font-semibold">Recent Student Activity</h2>
       </div>
 
       {activities.length === 0 && (
-        <div className="px-6 py-8 text-sm text-muted-foreground">
-          No recent activity yet.
+        <div className="px-6 py-10 text-sm text-muted-foreground text-center">
+          <p className="font-medium text-foreground mb-1">
+            No recent activity yet
+          </p>
+          <p>
+            Suggested image for this empty state: student checking admission
+            timeline on laptop.
+          </p>
         </div>
       )}
 
@@ -36,7 +42,7 @@ const RecentActivity = ({ activities }: RecentActivityProps) => {
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border bg-secondary/50">
+            <tr className="border-b border-border/70 bg-primary/5">
               <th className="text-left py-3 px-6 font-medium text-muted-foreground">
                 Student
               </th>
@@ -58,11 +64,11 @@ const RecentActivity = ({ activities }: RecentActivityProps) => {
             {activities.map((a) => (
               <tr
                 key={a.id}
-                className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors"
+                className="border-b border-border/60 last:border-0 hover:bg-primary/5 transition-colors"
               >
                 <td className="py-3.5 px-6">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shrink-0">
+                    <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shrink-0 shadow-sm">
                       {a.initials}
                     </div>
                     <span className="font-medium">{a.name}</span>
@@ -89,9 +95,12 @@ const RecentActivity = ({ activities }: RecentActivityProps) => {
       </div>
 
       {/* Mobile list */}
-      <div className="md:hidden divide-y divide-border">
+      <div className="md:hidden divide-y divide-border/70">
         {activities.map((a) => (
-          <div key={a.id} className="px-5 py-4 flex items-start gap-3">
+          <div
+            key={a.id}
+            className="px-5 py-4 flex items-start gap-3 hover:bg-primary/5 transition-colors"
+          >
             <div className="h-9 w-9 rounded-full gradient-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shrink-0 mt-0.5">
               {a.initials}
             </div>

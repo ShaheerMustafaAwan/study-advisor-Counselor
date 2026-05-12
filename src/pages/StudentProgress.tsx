@@ -78,7 +78,7 @@ const StudentProgressPage = () => {
   return (
     <CounselorLayout>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-2 rounded-2xl gradient-surface border border-white/70 p-4 md:p-5">
         <Button
           variant="ghost"
           size="icon"
@@ -107,10 +107,10 @@ const StudentProgressPage = () => {
       </div>
 
       {/* Tabbed Modules */}
-      <Card className="shadow-card">
+      <Card className="glass-card">
         <CardContent className="p-0">
           <Tabs defaultValue="documents" className="w-full">
-            <div className="border-b border-border px-6 pt-4">
+            <div className="border-b border-border px-6 pt-4 bg-white/65">
               <TabsList className="bg-transparent gap-1 h-auto p-0">
                 <TabsTrigger
                   value="documents"

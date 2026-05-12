@@ -9,9 +9,9 @@ import StudentRow from "./StudentRow";
 import type { Student } from "@/types/student";
 
 const StudentTable = ({ students }: { students: Student[] }) => (
-  <div className="overflow-auto rounded-xl border border-border">
+  <div className="overflow-auto rounded-2xl border border-white/70 bg-white/65 backdrop-blur-sm">
     <Table>
-      <TableHeader className="sticky top-0 bg-muted/60 backdrop-blur-sm z-10">
+      <TableHeader className="sticky top-0 bg-primary/5 backdrop-blur-sm z-10">
         <TableRow>
           <TableHead className="min-w-[180px]">Student</TableHead>
           <TableHead>GPA</TableHead>

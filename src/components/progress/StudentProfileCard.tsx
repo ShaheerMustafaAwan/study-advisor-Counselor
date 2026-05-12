@@ -28,7 +28,7 @@ const StudentProfileCard = ({ student }: Props) => {
       : "bg-emerald-100 text-emerald-700";
 
   return (
-    <Card className="shadow-card hover:shadow-card-hover transition-shadow">
+    <Card className="glass-card glass-card-hover">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg">Student Profile</CardTitle>
@@ -67,11 +67,11 @@ const StudentProfileCard = ({ student }: Props) => {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-xl bg-secondary p-3 text-center">
+          <div className="rounded-xl bg-primary/5 border border-primary/10 p-3 text-center">
             <p className="text-xs text-muted-foreground">GPA</p>
             <p className="text-xl font-bold text-foreground">{student.gpa}</p>
           </div>
-          <div className="rounded-xl bg-secondary p-3 text-center">
+          <div className="rounded-xl bg-primary/5 border border-primary/10 p-3 text-center">
             <p className="text-xs text-muted-foreground">IELTS</p>
             <p className="text-xl font-bold text-foreground">{student.ielts}</p>
           </div>

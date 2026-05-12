@@ -213,7 +213,7 @@ const Notifications = () => {
     <CounselorLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
+        <div className="rounded-2xl gradient-surface border border-white/70 p-5 md:p-6 shadow-soft">
           <h1 className="text-2xl font-bold text-foreground">Notifications</h1>
           <p className="text-muted-foreground mt-1">
             Track alerts and updates across all your students
@@ -235,7 +235,7 @@ const Notifications = () => {
           {stats.map((s) => (
             <Card
               key={s.label}
-              className="shadow-card hover:shadow-card-hover transition-shadow"
+              className="glass-card glass-card-hover"
             >
               <CardContent className="p-5 flex items-center justify-between">
                 <div>
@@ -244,7 +244,7 @@ const Notifications = () => {
                     {s.count}
                   </p>
                 </div>
-                <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <s.icon className={`h-5 w-5 ${s.color}`} />
                 </div>
               </CardContent>
@@ -253,7 +253,7 @@ const Notifications = () => {
         </div>
 
         {/* Notifications List */}
-        <Card className="shadow-card">
+        <Card className="glass-card">
           <CardHeader className="pb-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <CardTitle className="text-lg">All Notifications</CardTitle>
@@ -310,8 +310,8 @@ const Notifications = () => {
                 key={n.id}
                 className={`flex items-start gap-4 p-4 rounded-xl border transition-colors ${
                   n.read
-                    ? "bg-card border-border"
-                    : "bg-primary/[0.03] border-primary/20"
+                    ? "bg-white/65 border-white/70"
+                    : "bg-primary/[0.05] border-primary/30"
                 }`}
               >
                 {/* Icon */}
