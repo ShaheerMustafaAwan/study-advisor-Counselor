@@ -1,4 +1,6 @@
-export { API_BASE_URL, AUTH_TOKEN_STORAGE_KEY } from "./config";
+import { API_BASE_URL, AUTH_TOKEN_STORAGE_KEY } from "./config";
+
+export { API_BASE_URL, AUTH_TOKEN_STORAGE_KEY };
 
 export interface AuthTokenPayload {
   id?: number;
